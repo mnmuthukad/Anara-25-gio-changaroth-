@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIO Changaroth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>GIO Changaroth Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Universal Box Sizing for consistent layouts */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         /* Define a custom font family and fallback */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
@@ -16,6 +21,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
 
         .form-container {
@@ -115,6 +121,74 @@
                 padding: 10px 15px;
             }
         }
+
+        /* --- Modal Popup Specific Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's above other content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 90%; /* Max width for mobile */
+            width: 500px; /* Max width for desktop */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        /* Style for the preview data within the modal */
+        .preview-data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+        .preview-data-row:last-of-type {
+            border-bottom: none;
+        }
+        .preview-data-row strong {
+            color: #4b5563;
+            font-weight: 500;
+            flex-shrink: 0; /* Prevent key from shrinking */
+            margin-right: 15px;
+            text-align: left; /* Align key to left */
+        }
+        .preview-data-row span {
+            color: #1f2937;
+            font-weight: 600;
+            text-align: right; /* Align value to right */
+            flex-grow: 1; /* Allow value to take remaining space */
+            word-wrap: break-word; /* Ensure long values wrap */
+        }
+         @media (max-width: 380px) { /* Adjust for very small screens */
+            .preview-data-row strong, .preview-data-row span {
+                font-size: 0.9em; /* Slightly smaller text for very small screens */
+            }
+        }
     </style>
 </head>
 <body>
@@ -136,7 +210,7 @@
         <h1 id="formTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 px-4">Registration Form</h1>
         <p id="formDescription" class="text-center mb-4 text-gray-500 px-4">Please fill out the details below to register. **All fields are mandatory.**</p>
 
-        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4" role="alert"></div>
+        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 p-4 mb-6" role="alert"></div>
 
         <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 px-4 pb-4">
             <div>
@@ -193,14 +267,21 @@
         </div>
     </div>
 
+    <div id="successModalOverlay" class="modal-overlay">
+        <div id="successModalContent" class="modal-content">
+            </div>
+    </div>
     <script>
         const form = document.getElementById('registrationForm');
-        const messageBox = document.getElementById('messageBox');
+        const messageBox = document.getElementById('messageBox'); // Used for error messages
         const submitButton = document.getElementById('submitButton');
-        // --- ADDED THESE LINES ---
         const formTitle = document.getElementById('formTitle');
         const formDescription = document.getElementById('formDescription');
-        const bannerWrapper = document.querySelector('.banner-wrapper');
+        const bannerWrapper = document.getElementById('bannerWrapper'); // Get banner by ID
+
+        // Modal specific elements
+        const successModalOverlay = document.getElementById('successModalOverlay');
+        const successModalContent = document.getElementById('successModalContent');
         
         // Elements for the 'Unit / Halqa' dropdown logic
         const unitSelect = document.getElementById('unit');
@@ -235,25 +316,17 @@
             return cleanedData;
         }
 
-        // --- SUBMISSION PREVIEW LOGIC (COMPLETELY REWRITTEN) ---
+        // --- MODAL DISPLAY LOGIC (MODIFIED) ---
 
-        function showSubmissionPreview(data) {
-            
-            // 1. Hide all the old form content
-            form.classList.add('hidden');
-            formTitle.classList.add('hidden');
-            formDescription.classList.add('hidden');
-            bannerWrapper.classList.add('hidden'); // Hide the banner
-
-            // 2. Build the new HTML to match your desired screenshot
-            let htmlContent = `
+        function showSuccessModal(data) {
+            // 1. Build the HTML for the modal content
+            let modalHtmlContent = `
                 <p class="text-2xl font-bold text-green-600 mb-2 text-center">Registration Successful!</p>
                 <p class="text-center text-gray-600 mb-6">A preview of the information you submitted:</p>
                 
-                <div class="space-y-4 border-t border-b border-gray-200 py-6">
+                <div class="space-y-4 border-t border-b border-gray-200 py-6 mb-6">
             `;
             
-            // Create list items for each piece of data
             for (const key in data) {
                 const value = data[key];
                 let displayKey = key.replace(/(\/|\s)/g, ' / ').replace('Unit / Halqa', 'Unit / Halqa');
@@ -262,33 +335,34 @@
                     displayKey = 'Whatsapp Number';
                 }
 
-                // This creates the two-column layout
-                htmlContent += `
-                    <div class="flex justify-between items-center w-full">
-                        <strong class="text-gray-600 font-medium">${displayKey}:</strong>
-                        <span class="text-gray-900 font-medium">${value}</span>
+                modalHtmlContent += `
+                    <div class="preview-data-row">
+                        <strong>${displayKey}:</strong>
+                        <span>${value}</span>
                     </div>
                 `;
             }
             
-            htmlContent += `</div>`; // Close the border-t/b container
+            modalHtmlContent += `</div>`; // Close the border-t/b container
             
-            // Button to allow user to register again
-            htmlContent += `
+            modalHtmlContent += `
                 <button 
                     onclick="window.location.reload();" 
-                    class="mt-8 w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg"
+                    class="w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg"
                 >
                     Start New Registration
                 </button>
             `;
 
-            // 3. Update the message box with the new preview
-            messageBox.innerHTML = htmlContent;
-            
-            // 4. Clean up messageBox classes and make it visible
-            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'text-center', 'mx-4', 'p-4');
-            messageBox.classList.add('w-full'); // Ensure it takes full width
+            // 2. Populate the modal and show it
+            successModalContent.innerHTML = modalHtmlContent;
+            successModalOverlay.classList.add('show');
+
+            // 3. Disable the main form to prevent interaction while modal is open
+            // We'll also dim it slightly by adding a class to body or form-container
+            document.body.style.overflow = 'hidden'; // Prevent scrolling of main page
+            form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+            submitButton.textContent = 'Registered!'; // Update button text to indicate state
         }
 
         // --- TITLE CASE LOGIC ---
@@ -325,16 +399,24 @@
 
         // --- FORM SUBMISSION HANDLER ---
 
-        // Function to display generic error message
+        // Function to display generic error message (still appears within the form-container)
         function displayError(message) {
             messageBox.innerHTML = `<p class="font-medium">${message}</p>`;
-            // Reset message box to error state
-            messageBox.classList.remove('hidden', 'bg-green-50', 'p-6', 'w-full');
-            messageBox.classList.add('bg-red-100', 'text-red-800', 'text-center', 'p-4', 'mx-4');
+            messageBox.classList.remove('hidden');
+            messageBox.classList.add('bg-red-100', 'text-red-800');
+            
+            // Re-enable button on error
+            submitButton.textContent = 'Register Now';
+            submitButton.disabled = false;
         }
 
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
+            
+            // Clear any previous error messages
+            messageBox.classList.add('hidden');
+            messageBox.classList.remove('bg-red-100', 'text-red-800');
+
             const submittedData = getFormDataObject(form);
 
             submitButton.textContent = 'Submitting...';
@@ -344,8 +426,10 @@
 
             if (actionUrl === "" || actionUrl === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
                 // SIMULATED SUCCESS for testing
-                showSubmissionPreview(submittedData);
-                console.warn("NOTE: Form data was NOT sent. Using simulated success.");
+                setTimeout(() => { // Simulate network delay
+                    showSuccessModal(submittedData);
+                    console.warn("NOTE: Form data was NOT sent. Using simulated success.");
+                }, 1000); // 1 second delay
                 return;
             }
 
@@ -357,7 +441,7 @@
                 });
 
                 if (response.ok) {
-                    showSubmissionPreview(submittedData);
+                    showSuccessModal(submittedData);
                 } else {
                     const errorText = await response.text();
                     console.error('Apps Script Response Error:', errorText);
@@ -367,11 +451,7 @@
                 console.error('Submission error:', error);
                 displayError("Network or technical error. Could not submit the form.");
             } finally {
-                // Only re-enable the button if the form is *not* hidden (i.e., an error occurred)
-                if (form.classList.contains('hidden') === false) {
-                    submitButton.textContent = 'Register Now';
-                    submitButton.disabled = false;
-                }
+                // Button state managed by modal or error function, not here directly
             }
         });
     </script>
