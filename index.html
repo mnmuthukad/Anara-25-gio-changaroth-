@@ -214,7 +214,7 @@
 
         <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 p-4 mb-6" role="alert"></div>
 
-        <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 px-4 pb-4">
+        <form id="registrationForm" action="YOUR_APPS_SCRIPT_WEB_APP_URL_HERE" method="POST" class="space-y-6 px-4 pb-4">
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
                 <input type="text" id="name" name="Name" required placeholder="Full Name" class="input-field">
@@ -273,14 +273,12 @@
         <div id="successModalContent" class="modal-content">
             </div>
     </div>
+
     <script>
         const form = document.getElementById('registrationForm');
-        const messageBox = document.getElementById('messageBox'); // Used for error messages
+        const messageBox = document.getElementById('messageBox');
         const submitButton = document.getElementById('submitButton');
-        const formTitle = document.getElementById('formTitle');
-        const formDescription = document.getElementById('formDescription');
-        const bannerWrapper = document.getElementById('bannerWrapper'); // Get banner by ID
-
+        
         // Modal specific elements
         const successModalOverlay = document.getElementById('successModalOverlay');
         const successModalContent = document.getElementById('successModalContent');
@@ -295,6 +293,7 @@
         const placeInput = document.getElementById('place');
 
         // --- DATA PROCESSING LOGIC ---
+        // Gathers form data and performs conditional processing for 'Other Unit/Halqa'
         function getFormDataObject(form) {
             const formData = new FormData(form);
             const data = {};
@@ -302,16 +301,20 @@
                 data[key] = value;
             }
 
+            // If 'Other' is selected for 'Unit/halqa', use the value from 'Other Unit/Halqa'
             const selectedUnit = data['Unit/halqa'];
             if (selectedUnit === 'Other' && data['Other Unit/Halqa']) {
                 data['Unit/halqa'] = data['Other Unit/Halqa'];
             }
+            // Remove the 'Other Unit/Halqa' field from the final data object to avoid duplicates
             delete data['Other Unit/Halqa'];
 
+            // Clean up keys for display in modal (e.g., convert 'Unit/halqa' to 'Unit / Halqa')
             const cleanedData = {};
             for (const key in data) {
-                if (data[key] && key !== 'Other Unit/Halqa') {
-                    const displayKey = key.replace(/(\/|\s)/g, ' / ').replace('Unit / Halqa', 'Unit / Halqa');
+                if (data[key]) { // Only include fields that have a value
+                    let displayKey = key.replace(/([A-Z])/g, ' $1').replace(/(\/)/g, ' / ').trim(); // Add space before capital letters, handle slashes
+                    displayKey = displayKey.charAt(0).toUpperCase() + displayKey.slice(1); // Capitalize first letter
                     cleanedData[displayKey] = data[key];
                 }
             }
@@ -320,8 +323,8 @@
 
         // --- MODAL DISPLAY LOGIC ---
 
+        // Shows the success modal with a summary of submitted data
         function showSuccessModal(data) {
-            // 1. Build the HTML for the modal content
             let modalHtmlContent = `
                 <p class="text-2xl font-bold text-green-600 mb-2 text-center">Registration Successful!</p>
                 <p class="text-center text-gray-600 mb-6">A preview of the information you submitted:</p>
@@ -331,15 +334,9 @@
             
             for (const key in data) {
                 const value = data[key];
-                let displayKey = key.replace(/(\/|\s)/g, ' / ').replace('Unit / Halqa', 'Unit / Halqa');
-                
-                if (displayKey.includes('Whatsapp')) {
-                    displayKey = 'Whatsapp Number';
-                }
-
                 modalHtmlContent += `
                     <div class="preview-data-row">
-                        <strong>${displayKey}:</strong>
+                        <strong>${key}:</strong>
                         <span>${value}</span>
                     </div>
                 `;
@@ -364,27 +361,26 @@
                 </div>
             `;
 
-            // 2. Populate the modal and show it
+            // Populate the modal and show it
             successModalContent.innerHTML = modalHtmlContent;
             successModalOverlay.classList.add('show');
 
-            // 3. Disable the main form to prevent interaction while modal is open
+            // Disable the main form to prevent interaction while modal is open
             document.body.style.overflow = 'hidden'; // Prevent scrolling of main page
             form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
-            // Optionally, you can visually dim the form container
-            // form.classList.add('opacity-50', 'pointer-events-none'); 
         }
 
+        // Closes the success modal and re-enables form elements
         function closeSuccessModal() {
             successModalOverlay.classList.remove('show');
             document.body.style.overflow = ''; // Re-enable scrolling of main page
-            // Re-enable form elements, but don't reset values unless explicitly requested
             form.querySelectorAll('input, select, button').forEach(el => el.disabled = false);
             submitButton.textContent = 'Register Now'; // Reset submit button text
         }
 
 
         // --- TITLE CASE LOGIC ---
+        // Applies title case formatting to an input element's value
         function applyTitleCase(inputElement) {
             const start = inputElement.selectionStart;
             const end = inputElement.selectionEnd;
@@ -396,32 +392,32 @@
             inputElement.setSelectionRange(start, end);
         }
 
+        // Apply title case to Name and Place fields
         nameInput.addEventListener('input', () => applyTitleCase(nameInput));
         placeInput.addEventListener('input', () => applyTitleCase(placeInput));
-        // Removed otherUnitInput from global title case listener as it's handled conditionally
-        // otherUnitInput.addEventListener('input', () => applyTitleCase(otherUnitInput));
 
 
         // --- UNIT/HALQA (DROPDOWN) LOGIC ---
+        // Toggles the visibility and required status of the 'Other Unit/Halqa' input
         unitSelect.addEventListener('change', function() {
             if (this.value === 'Other') {
                 otherUnitContainer.classList.remove('hidden');
                 otherUnitInput.required = true;
                 otherUnitInput.disabled = false;
-                otherUnitInput.addEventListener('input', () => applyTitleCase(otherUnitInput)); // Add listener when active
+                otherUnitInput.addEventListener('input', () => applyTitleCase(otherUnitInput)); // Add title case listener when active
             } else {
                 otherUnitContainer.classList.add('hidden');
                 otherUnitInput.required = false;
                 otherUnitInput.disabled = true;
-                otherUnitInput.value = '';
-                otherUnitInput.removeEventListener('input', () => applyTitleCase(otherUnitInput)); // Remove listener when inactive
+                otherUnitInput.value = ''; // Clear value when hidden
+                otherUnitInput.removeEventListener('input', () => applyTitleCase(otherUnitInput)); // Remove title case listener when inactive
             }
         });
 
 
         // --- FORM SUBMISSION HANDLER ---
 
-        // Function to display generic error message (still appears within the form-container)
+        // Function to display generic error message within the form container
         function displayError(message) {
             messageBox.innerHTML = `<p class="font-medium">${message}</p>`;
             messageBox.classList.remove('hidden');
@@ -433,28 +429,30 @@
         }
 
         form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            
+            event.preventDefault(); // Prevent default form submission
+
             // Clear any previous error messages
             messageBox.classList.add('hidden');
             messageBox.classList.remove('bg-red-100', 'text-red-800');
 
-            const submittedData = getFormDataObject(form);
+            const submittedData = getFormDataObject(form); // Get the cleaned form data
 
             submitButton.textContent = 'Submitting...';
             submitButton.disabled = true;
 
             const actionUrl = form.getAttribute('action');
 
+            // --- SIMULATED SUCCESS FOR TESTING ---
+            // If the action URL is the placeholder, simulate a successful submission
             if (actionUrl === "" || actionUrl === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
-                // SIMULATED SUCCESS for testing
                 setTimeout(() => { // Simulate network delay
                     showSuccessModal(submittedData);
-                    console.warn("NOTE: Form data was NOT sent. Using simulated success.");
+                    console.warn("NOTE: Form data was NOT sent. Using simulated success. Please replace 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE' with your actual Google Apps Script Web App URL.");
                 }, 1000); // 1 second delay
-                return;
+                return; // Stop execution
             }
 
+            // --- ACTUAL FORM SUBMISSION ---
             try {
                 const formData = new FormData(form);
                 const response = await fetch(actionUrl, {
@@ -467,13 +465,13 @@
                 } else {
                     const errorText = await response.text();
                     console.error('Apps Script Response Error:', errorText);
-                    displayError("An error occurred during submission. Check permissions or URL.");
+                    displayError("An error occurred during submission. Please check your Google Apps Script URL and permissions.");
                 }
             } catch (error) {
                 console.error('Submission error:', error);
-                displayError("Network or technical error. Could not submit the form.");
+                displayError("Network or technical error. Could not submit the form. Please check your internet connection.");
             } finally {
-                // Button state managed by modal or error function, not here directly
+                // Button state (enabled/disabled) and text is handled by showSuccessModal or displayError
             }
         });
     </script>
