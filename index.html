@@ -204,29 +204,29 @@
             >
             
             <div class="banner-overlay-box">
-                <p class="text-xl sm:text-2xl font-bold">Anara '25 Girls Meet</p>
-                <p class="text-sm sm:text-base font-normal mt-1">2025 November 02</p>
+                <p class="text-xl sm:text-2xl font-bold"><br>Anara '25 Girls Meet</p>
+                <p class="text-sm sm:text-base font-normal mt-1"><br>2025 November 02</p>
             </div>
         </div>
 
-        <h1 id="formTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 px-4">Registration Form</h1>
-        <p id="formDescription" class="text-center mb-4 text-gray-500 px-4">Please fill out the details below to register. **All fields are mandatory.**</p>
+        <h1 id="formTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 px-4"><br>Registration Form</h1>
+        <p id="formDescription" class="text-center mb-4 text-gray-500 px-4"><br>Please fill out the details below to register. **All fields are mandatory.**</p>
 
         <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 p-4 mb-6" role="alert"></div>
 
         <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 px-4 pb-4">
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1"><br>Full Name <span class="text-red-500">*</span></label><br>
                 <input type="text" id="name" name="Name" required placeholder="Full Name" class="input-field">
             </div>
 
             <div>
-                <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age <span class="text-red-500">*</span></label>
+                <label for="age" class="block text-sm font-medium text-gray-700 mb-1"><br>Age <span class="text-red-500">*</span></label><br>
                 <input type="number" id="age" name="Age" min="6" max="60" required placeholder="Your Age" class="input-field">
             </div>
 
             <div>
-                <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unit / Halqa <span class="text-red-500">*</span></label>
+                <label for="unit" class="block text-sm font-medium text-gray-700 mb-1"><br>Unit / Halqa <span class="text-red-500">*</span></label><br>
                 <select id="unit" name="Unit/halqa" required class="input-field appearance-none">
                     <option value="" disabled selected>Select a Unit / Halqa</option>
                     <option value="Cheriya Kumbalam">Cheriya Kumbalam</option>
@@ -239,20 +239,20 @@
             </div>
 
             <div id="otherUnitContainer" class="hidden">
-                <label for="other_unit" class="block text-sm font-medium text-gray-700 mb-1">Specify Unit / Halqa <span class="text-red-500">*</span></label>
+                <label for="other_unit" class="block text-sm font-medium text-gray-700 mb-1"><br>Specify Unit / Halqa <span class="text-red-500">*</span></label><br>
                 <input type="text" id="other_unit" name="Other Unit/Halqa" placeholder="Write your Unit or Halqa here" class="input-field" disabled>
             </div>
 
             <div>
-                <label for="place" class="block text-sm font-medium text-gray-700 mb-1">Place <span class="text-red-500">*</span></label>
+                <label for="place" class="block text-sm font-medium text-gray-700 mb-1"><br>Place <span class="text-red-500">*</span></label><br>
                 <input type="text" id="place" name="Place" required placeholder="City or Town" class="input-field">
             </div>
 
             <div>
-                <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Whatsapp Number <span class="text-red-500">*</span></label>
-                <input type="tel" id="contact" name="Whatsapp Number" required pattern="[0-9]{10,15}" placeholder="e.g., 9876543210 (Must be a Whatsapp enabled number)" class="input-field">
-                <p class="mt-1 text-xs text-gray-500">Please enter a valid Whatsapp number (10-15 digits).</p>
-            </div>
+                <label for="contact" class="block text-sm font-medium text-gray-700 mb-1"><br>Whatsapp Number <span class="text-red-500">*</span></label><br>
+                <input type="tel" id="contact" name="Whatsapp Number" required pattern="[0-9]{10,12}" placeholder="e.g., 9876543210 (Whatsapp number)" class="input-field">
+                
+            </div><br>
 
             <button type="submit" id="submitButton" class="submit-button">
                 Register Now
