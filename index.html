@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>GIO Changaroth Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Universal Box Sizing for consistent layouts */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         /* Define a custom font family and fallback */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
@@ -16,6 +21,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
 
         .form-container {
@@ -27,6 +33,18 @@
             padding: 30px; /* Consistent padding around the content */
             border-radius: 16px;
             overflow: hidden; /* Ensures banner corners are rounded */
+        }
+
+        /* Adjust form-container padding for very small mobile screens */
+        @media (max-width: 380px) { /* Example breakpoint for smaller phones */
+            .form-container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .banner-wrapper {
+                margin-left: -15px;
+                margin-right: -15px;
+            }
         }
 
         /* Custom styling for inputs to make them look uniform and accessible */
