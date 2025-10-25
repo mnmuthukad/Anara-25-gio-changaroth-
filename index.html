@@ -137,6 +137,8 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            overflow-y: auto; /* Allow scrolling if modal content is too tall */
+            padding: 20px 0; /* Add vertical padding for content */
         }
 
         .modal-overlay.show {
@@ -316,7 +318,7 @@
             return cleanedData;
         }
 
-        // --- MODAL DISPLAY LOGIC (MODIFIED) ---
+        // --- MODAL DISPLAY LOGIC ---
 
         function showSuccessModal(data) {
             // 1. Build the HTML for the modal content
@@ -346,12 +348,20 @@
             modalHtmlContent += `</div>`; // Close the border-t/b container
             
             modalHtmlContent += `
-                <button 
-                    onclick="window.location.reload();" 
-                    class="w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg"
-                >
-                    Start New Registration
-                </button>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button 
+                        onclick="window.location.reload();" 
+                        class="flex-1 px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg"
+                    >
+                        Start New Registration
+                    </button>
+                    <button 
+                        onclick="closeSuccessModal();" 
+                        class="flex-1 px-4 py-3 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition shadow-sm"
+                    >
+                        Close
+                    </button>
+                </div>
             `;
 
             // 2. Populate the modal and show it
@@ -359,11 +369,20 @@
             successModalOverlay.classList.add('show');
 
             // 3. Disable the main form to prevent interaction while modal is open
-            // We'll also dim it slightly by adding a class to body or form-container
             document.body.style.overflow = 'hidden'; // Prevent scrolling of main page
             form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
-            submitButton.textContent = 'Registered!'; // Update button text to indicate state
+            // Optionally, you can visually dim the form container
+            // form.classList.add('opacity-50', 'pointer-events-none'); 
         }
+
+        function closeSuccessModal() {
+            successModalOverlay.classList.remove('show');
+            document.body.style.overflow = ''; // Re-enable scrolling of main page
+            // Re-enable form elements, but don't reset values unless explicitly requested
+            form.querySelectorAll('input, select, button').forEach(el => el.disabled = false);
+            submitButton.textContent = 'Register Now'; // Reset submit button text
+        }
+
 
         // --- TITLE CASE LOGIC ---
         function applyTitleCase(inputElement) {
