@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIO Changaroth</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a custom font family and fallback */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb; /* Light background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-container {
+            /* Max width for desktop viewing */
+            max-width: 500px;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 30px;
+            padding-top: 0; /* Adjust padding for banner */
+            border-radius: 16px;
+            overflow: hidden; /* Ensures banner corners are rounded */
+        }
+
+        /* Custom styling for inputs to make them look uniform and accessible */
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none; /* For iOS Safari */
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #8b5cf6; /* Focus color (purple-500) */
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Custom style for the submit button */
+        .submit-button {
+            width: 100%;
+            background-image: linear-gradient(to right, #9333ea, #c026d3); /* Purple gradient */
+            color: white;
+            padding: 14px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-image 0.3s, transform 0.1s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .submit-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .submit-button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        /* Banner specific styles */
+        .banner-wrapper {
+            position: relative; /* Needed for absolute positioning of child elements */
+            width: 100%;
+            height: 200px; /* Set a fixed height for the banner area */
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            overflow: hidden; /* Ensure rounded corners */
+            margin-bottom: 20px; /* Space below the banner */
+        }
+
+        .banner-image {
+            width: 100%;
+            height: 100%; /* Make image fill the wrapper height */
+            object-fit: cover; /* Crop image to fit without distorting */
+            display: block;
+        }
+
+        .banner-overlay-box {
+            position: absolute;
+            top: 50%; /* Position vertically in the middle */
+            left: 50%; /* Position horizontally in the middle */
+            transform: translate(-50%, -50%); /* Adjust to truly center */
+            /* Styling updated for better contrast over any image */
+            background-color: rgba(0, 0, 0, 0.6); 
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            color: #fff; /* White text */
+            font-weight: 700;
+            font-size: 1.2em;
+            max-width: 80%; /* Ensure box doesn't overflow on small screens */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive adjustments for the overlay box text if needed */
+        @media (max-width: 400px) {
+            .banner-overlay-box {
+                font-size: 0.9em;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <!-- Header Banner Image with Overlay Box --><div class="banner-wrapper">
+            <!-- 
+                BANNER IMAGE SECTION:
+                Replace the src below with your actual event banner image URL. 
+                I've used your uploaded image for now.
+            --><img src="image/vb.png" 
+                 alt="Event Banner" 
+                 class="banner-image"
+                 onerror="this.onerror=null; this.src='https://placehold.co/500x200/5B21B6/ffffff?text=GIO+Event+Banner';"
+            >
+            <!-- 
+            <div class="banner-overlay-box">
+                <p class="text-2xl font-bold">Anara '25 Girls Meet</p>
+                <p class="text-base font-normal mt-1">2025 November 02</p>
+            </div> -->
+        </div>
+
+        <!-- Header Section --><h1 class="text-3xl font-bold text-center mb-2 text-gray-800 px-4">Registration Form</h1>
+        <p class="text-center mb-4 text-gray-500 px-4">Please fill out the details below to register. **All fields are mandatory.**</p>
+
+        <!-- Notification Message Box (Hidden by default) -->
+        <!-- This now serves as the Submission Preview Box -->
+        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4" role="alert"></div>
+
+        <!-- Registration Form -->
+        <!-- 
+            *** IMPORTANT: ACTION URL UPDATED WITH YOUR DEPLOYMENT LINK ***
+            This URL sends the form data directly to your Google Sheet via the Apps Script.
+        -->
+        <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 px-4 pb-4">
+            <!-- Name Field --><div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                <input type="text" id="name" name="Name" required placeholder="Full Name" class="input-field">
+            </div>
+
+            <!-- Age Field (UPDATED MIN/MAX) --><div>
+                <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age <span class="text-red-500">*</span></label>
+                <input type="number" id="age" name="Age" min="6" max="60" required placeholder="Your Age" class="input-field">
+            </div>
+
+            <!-- Unit/Halqa Field (Dropdown with Other option - NEW LOCATION) --><div>
+                <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unit / Halqa <span class="text-red-500">*</span></label>
+                <select id="unit" name="Unit/halqa" required class="input-field appearance-none">
+                    <option value="" disabled selected>Select a Unit / Halqa</option>
+                    <!-- Using previous place options as Unit/Halqa options now -->
+                    <option value="Cheriya Kumbalam">Cheriya Kumbalam</option>
+                    <option value="Paleri">Paleri</option>
+                    <option value="Panthirikara">Panthirikara</option>
+                    <option value="Parakadav">Parakadav</option>
+                    <option value="Thodathankandy">Thodathankandy</option>
+                    <option value="Other">Other (Please Specify)</option>
+                </select>
+            </div>
+
+            <!-- Other Unit/Halqa Input Field (Initially Hidden) - NEW LOCATION -->
+            <div id="otherUnitContainer" class="hidden">
+                <label for="other_unit" class="block text-sm font-medium text-gray-700 mb-1">Specify Unit / Halqa <span class="text-red-500">*</span></label>
+                <!-- Disabled/non-required by default. JS will make it required/enabled when "Other" is selected. -->
+                <input type="text" id="other_unit" name="Other Unit/Halqa" placeholder="Write your Unit or Halqa here" class="input-field" disabled>
+            </div>
+
+            <!-- Place Field (Text Input - NEW LOCATION) --><div>
+                <label for="place" class="block text-sm font-medium text-gray-700 mb-1">Place <span class="text-red-500">*</span></label>
+                <input type="text" id="place" name="Place" required placeholder="City or Town" class="input-field">
+            </div>
+
+            <!-- Whatsapp Number Field (CHANGED FROM Contact Number) --><div>
+                <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Whatsapp Number <span class="text-red-500">*</span></label>
+                <input type="tel" id="contact" name="Whatsapp Number" required pattern="[0-9]{10,15}" placeholder="e.g., 9876543210 (Must be a Whatsapp enabled number)" class="input-field">
+                <p class="mt-1 text-xs text-gray-500">Please enter a valid Whatsapp number (10-15 digits).</p>
+            </div>
+
+            <!-- Submit Button --><button type="submit" id="submitButton" class="submit-button">
+                Register Now
+            </button>
+        </form>
+        
+        <!-- Footer / Logo Section -->
+        <div class="pt-6 mt-6 border-t border-gray-200 text-center px-4 pb-4">
+            <p class="text-sm text-gray-500 mb-2">Powered by</p>
+            <img src="image/GIO C.png" 
+                 alt="GIO Logo" 
+                 class="mx-auto h-14 w-auto"
+                 onerror="this.onerror=null; this.src='https://placehold.co/100x48/5B21B6/ffffff?text=GIO+Logo';"
+            >
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registrationForm');
+        const messageBox = document.getElementById('messageBox');
+        const submitButton = document.getElementById('submitButton');
+        
+        // Elements for the 'Unit / Halqa' dropdown logic
+        const unitSelect = document.getElementById('unit');
+        const otherUnitContainer = document.getElementById('otherUnitContainer');
+        const otherUnitInput = document.getElementById('other_unit');
+        
+        // Elements for title case logic
+        const nameInput = document.getElementById('name');
+        const placeInput = document.getElementById('place');
+
+        // --- DATA PROCESSING LOGIC ---
+
+        // Helper function to extract and clean form data into a simple object
+        function getFormDataObject(form) {
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+
+            // Special handling for the Unit/Halqa field with 'Other' option
+            const selectedUnit = data['Unit/halqa'];
+            if (selectedUnit === 'Other' && data['Other Unit/Halqa']) {
+                // If "Other" was selected, use the value from the text input and label it Unit/Halqa
+                data['Unit/halqa'] = data['Other Unit/Halqa'];
+            }
+            // Remove the temporary 'Other Unit/Halqa' field from the final data object
+            delete data['Other Unit/Halqa'];
+
+            // Clean up the object keys for display (e.g., 'Whatsapp Number' -> 'Whatsapp Number')
+            const cleanedData = {};
+            for (const key in data) {
+                if (data[key] && key !== 'Other Unit/Halqa') {
+                    // Capitalize first letter of each word for display keys (Handles 'Whatsapp Number' fine)
+                    const displayKey = key.replace(/\b\w/g, char => char.toUpperCase());
+                    cleanedData[displayKey] = data[key];
+                }
+            }
+            return cleanedData;
+        }
+
+        // --- SUBMISSION PREVIEW LOGIC ---
+
+        function showSubmissionPreview(data) {
+            // Build the HTML content for the preview
+            let htmlContent = '<p class="text-xl font-bold text-green-700 mb-4">Registration Successful!</p>';
+            htmlContent += '<p class="text-lg text-gray-700 mb-4">A preview of the information you submitted:</p>';
+            
+            // Start list
+            htmlContent += '<ul class="text-left space-y-3 p-4 bg-white rounded-lg border border-green-200">';
+            
+            // Create list items for each piece of data
+            for (const key in data) {
+                const value = data[key];
+                // Format the key for display (e.g., "Unit/halqa" -> "Unit / Halqa")
+                let displayKey = key.replace(/(\/|\s)/g, ' / ').replace('Unit / Halqa', 'Unit / Halqa');
+                
+                // Fix capitalization anomaly caused by the automatic replacement (e.g. "Whatsapp Number" should be "Whatsapp Number")
+                if (displayKey.includes('Whatsapp')) {
+                    displayKey = 'Whatsapp Number';
+                }
+
+                htmlContent += `<li class="flex justify-between items-start">
+                                    <strong class="font-semibold text-gray-600 min-w-[120px] pr-4">${displayKey}:</strong> 
+                                    <span class="text-gray-900 font-medium text-right flex-1">${value}</span>
+                                </li>`;
+            }
+            
+            htmlContent += '</ul>';
+            
+            // Button to allow user to register again
+            htmlContent += '<button onclick="window.location.reload();" class="mt-6 w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg">Start New Registration</button>';
+
+
+            // Update the message box with the preview
+            messageBox.innerHTML = htmlContent;
+            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'text-center', 'p-4');
+            messageBox.classList.add('bg-green-50', 'p-6'); // Apply clean background/padding
+            
+            // Hide the form fields
+            form.classList.add('hidden');
+
+            // Hide the general header info
+            document.querySelector('.text-3xl').classList.add('hidden');
+            document.querySelector('.text-center.mb-4').classList.add('hidden');
+        }
+
+        // --- TITLE CASE LOGIC ---
+
+        // Function to apply Title Case to the input field's value
+        function applyTitleCase(inputElement) {
+            // Get the current cursor position to maintain a smooth typing experience
+            const start = inputElement.selectionStart;
+            const end = inputElement.selectionEnd;
+
+            // Get the value, convert it to lowercase first to reset previous casing
+            let value = inputElement.value.toLowerCase();
+            
+            // Convert to title case: capitalize the first letter of every word
+            let titleCaseValue = value.replace(/\b\w/g, function(char) {
+                return char.toUpperCase();
+            }
+            );
+
+            // Update the input field's value
+            inputElement.value = titleCaseValue;
+            
+            // Restore cursor position
+            inputElement.setSelectionRange(start, end);
+        }
+
+        // Apply title case as the user types
+        nameInput.addEventListener('input', () => applyTitleCase(nameInput));
+        placeInput.addEventListener('input', () => applyTitleCase(placeInput));
+        otherUnitInput.addEventListener('input', () => applyTitleCase(otherUnitInput));
+
+
+        // --- UNIT/HALQA (DROPDOWN) LOGIC ---
+
+        // Function to handle the visibility and requirement of the 'Other' input
+        unitSelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                // Show the input, make it required and enabled for submission
+                otherUnitContainer.classList.remove('hidden');
+                otherUnitInput.required = true;
+                otherUnitInput.disabled = false;
+            } else {
+                // Hide the input, remove required, clear value, and disable it
+                otherUnitContainer.classList.add('hidden');
+                otherUnitInput.required = false;
+                otherUnitInput.disabled = true; // Disabled fields are not submitted
+                otherUnitInput.value = '';
+            }
+        });
+
+
+        // --- FORM SUBMISSION HANDLER ---
+
+        // Function to display generic error message
+        function displayError(message) {
+            messageBox.innerHTML = `<p class="font-medium">${message}</p>`;
+            messageBox.classList.remove('hidden', 'bg-green-50', 'p-6');
+            messageBox.classList.add('bg-red-100', 'text-red-800', 'text-center', 'p-4');
+        }
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // 1. Get the data before proceeding
+            const submittedData = getFormDataObject(form);
+
+            // Disable button and show loading state
+            submitButton.textContent = 'Submitting...';
+            submitButton.disabled = true;
+
+            const actionUrl = form.getAttribute('action');
+
+            if (actionUrl === "" || actionUrl === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
+                // SIMULATED SUCCESS if the action URL hasn't been set yet
+                showSubmissionPreview(submittedData);
+                console.warn("NOTE: Form data was NOT sent to Google Sheets. Please deploy the Apps Script and replace the action URL in the HTML form.");
+                return;
+            }
+
+            // REAL SUBMISSION to the Apps Script endpoint
+            try {
+                const formData = new FormData(form);
+                
+                // Note: We use the raw FormData here as the Apps Script expects the raw form fields,
+                // including 'Other Unit/Halqa' if present, which the Apps Script resolves.
+                const response = await fetch(actionUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // The Apps Script returns a JSON object on success
+                if (response.ok) {
+                    showSubmissionPreview(submittedData);
+                } else {
+                    // Check if the response body contains an error message from Apps Script
+                    const errorText = await response.text();
+                    console.error('Apps Script Response Error:', errorText);
+                    displayError("An error occurred during submission. Check the Apps Script deployment permissions or URL.");
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                displayError("Network or technical error. Could not submit the form.");
+            } finally {
+                // Re-enable button on error, but not on success since the form is hidden
+                if (form.classList.contains('hidden') === false) {
+                    submitButton.textContent = 'Register Now';
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
