@@ -24,8 +24,7 @@
             width: 100%;
             background-color: #ffffff;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0px 10px -5px rgba(0, 0, 0, 0.04);
-            padding: 30px;
-            padding-top: 0; /* Adjust padding for banner */
+            padding: 30px; /* Consistent padding around the content */
             border-radius: 16px;
             overflow: hidden; /* Ensures banner corners are rounded */
         }
@@ -76,7 +75,10 @@
             border-top-left-radius: 16px;
             border-top-right-radius: 16px;
             overflow: hidden; /* Ensure rounded corners */
-            margin-bottom: 20px; /* Space below the banner */
+            margin-top: -30px; /* Negative margin to pull it up into the form-container's padding-top area */
+            margin-left: -30px; /* Negative margin to pull it left */
+            margin-right: -30px; /* Negative margin to pull it right */
+            margin-bottom: 24px; /* Increased space below the banner */
         }
         
         /* Apply taller height for screens 420px and wider */
@@ -135,24 +137,24 @@
             </div>
         </div>
 
-        <h1 class="text-3xl font-bold text-center mb-2 text-gray-800 px-4">Registration Form</h1>
-        <p class="text-center mb-4 text-gray-500 px-4">Please fill out the details below to register. **All fields are mandatory.**</p>
+        <h1 class="text-3xl font-bold text-center mb-3 text-gray-800">Registration Form</h1>
+        <p class="text-center mb-6 text-gray-500">Please fill out the details below to register. **All fields are mandatory.**</p>
 
-        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4" role="alert"></div>
+        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 mb-6" role="alert"></div>
 
-        <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 px-4 pb-4">
+        <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 pb-4">
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
                 <input type="text" id="name" name="Name" required placeholder="Full Name" class="input-field">
             </div>
 
             <div>
-                <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age <span class="text-red-500">*</span></label>
+                <label for="age" class="block text-sm font-medium text-gray-700 mb-2">Age <span class="text-red-500">*</span></label>
                 <input type="number" id="age" name="Age" min="6" max="60" required placeholder="Your Age" class="input-field">
             </div>
 
             <div>
-                <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unit / Halqa <span class="text-red-500">*</span></label>
+                <label for="unit" class="block text-sm font-medium text-gray-700 mb-2">Unit / Halqa <span class="text-red-500">*</span></label>
                 <select id="unit" name="Unit/halqa" required class="input-field appearance-none">
                     <option value="" disabled selected>Select a Unit / Halqa</option>
                     <option value="Cheriya Kumbalam">Cheriya Kumbalam</option>
@@ -165,19 +167,19 @@
             </div>
 
             <div id="otherUnitContainer" class="hidden">
-                <label for="other_unit" class="block text-sm font-medium text-gray-700 mb-1">Specify Unit / Halqa <span class="text-red-500">*</span></label>
+                <label for="other_unit" class="block text-sm font-medium text-gray-700 mb-2">Specify Unit / Halqa <span class="text-red-500">*</span></label>
                 <input type="text" id="other_unit" name="Other Unit/Halqa" placeholder="Write your Unit or Halqa here" class="input-field" disabled>
             </div>
 
             <div>
-                <label for="place" class="block text-sm font-medium text-gray-700 mb-1">Place <span class="text-red-500">*</span></label>
+                <label for="place" class="block text-sm font-medium text-gray-700 mb-2">Place <span class="text-red-500">*</span></label>
                 <input type="text" id="place" name="Place" required placeholder="City or Town" class="input-field">
             </div>
 
             <div>
-                <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Whatsapp Number <span class="text-red-500">*</span></label>
+                <label for="contact" class="block text-sm font-medium text-gray-700 mb-2">Whatsapp Number <span class="text-red-500">*</span></label>
                 <input type="tel" id="contact" name="Whatsapp Number" required pattern="[0-9]{10,15}" placeholder="e.g., 9876543210 (Must be a Whatsapp enabled number)" class="input-field">
-                <p class="mt-1 text-xs text-gray-500">Please enter a valid Whatsapp number (10-15 digits).</p>
+                <p class="mt-2 text-xs text-gray-500">Please enter a valid Whatsapp number (10-15 digits).</p>
             </div>
 
             <button type="submit" id="submitButton" class="submit-button">
@@ -185,7 +187,7 @@
             </button>
         </form>
         
-        <div class="pt-6 mt-6 border-t border-gray-200 text-center px-4 pb-4">
+        <div class="pt-8 mt-8 border-t border-gray-200 text-center pb-4">
             <p class="text-sm text-gray-500 mb-2">Powered by</p>
             <img src="GIO C.png" 
                  alt="GIO Logo" 
@@ -281,9 +283,9 @@
             // Hide the form fields
             form.classList.add('hidden');
 
-            // Hide the general header info
-            document.querySelector('.text-3xl').classList.add('hidden');
-            document.querySelector('.text-center.mb-4').classList.add('hidden');
+            // Hide the general header info (h1 and p below it)
+            document.querySelector('.form-container > h1').classList.add('hidden');
+            document.querySelector('.form-container > p:not(#messageBox)').classList.add('hidden'); // Selects the paragraph after h1
         }
 
         // --- TITLE CASE LOGIC ---
