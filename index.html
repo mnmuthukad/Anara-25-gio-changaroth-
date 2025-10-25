@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>GIO Changaroth</title>
+    <title>GIO Changaroth Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Universal Box Sizing for consistent layouts */
@@ -204,41 +204,41 @@
             >
         </div>
 
-        <h1 id="formTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 px-4"><br>Registration Form</h1><br>
+        <h1 id="formTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 px-4"><br>Registration Form</h1>
         <p id="formDescription" class="text-center mb-4 text-gray-500 px-4">Please fill out the details below to register. <br>**All fields are mandatory.**</p><br>
 
-        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 p-4 mb-6" role="alert"></div>
+        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 p-4 mb-6" role="alert"></div><br>
 
         <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbxFVhq-74JZaorMWvBaLMI6YJuwcrJkhuPtrN-EmguAF0BqFG6a8FmL2j3Pz6_u2BFT/exec" method="POST" class="space-y-6 px-4 pb-4">
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*<br></span></label><br>
                 <input type="text" id="name" name="Name" required placeholder="Full Name" class="input-field">
-            </div><br>
+            </div><br><br>
 
             <div>
                 <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age <span class="text-red-500">*<br></span></label><br>
                 <input type="number" id="age" name="Age" min="6" max="60" required placeholder="Your Age" class="input-field">
-            </div><br>
+            </div><br><br>
 
             <div>
                 <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unit / Halqa <span class="text-red-500">*<br></span></label><br>
                 <input type="text" id="unit" name="Unit/halqa" required placeholder="e.g., Cheriya Kumbalam" class="input-field">
-            </div><br>
+            </div><br><br>
 
             <div>
                 <label for="place" class="block text-sm font-medium text-gray-700 mb-1">Place <span class="text-red-500">*<br></span></label><br>
                 <input type="text" id="place" name="Place" required placeholder="City or Town" class="input-field">
-            </div><br>
+            </div><br><br>
 
             <div>
                 <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Whatsapp Number <span class="text-red-500">*<br></span></label><br>
-                <input type="tel" id="contact" name="Whatsapp Number" required pattern="[0-9]{10,15}" placeholder="e.g., 9876543210 (Must be a Whatsapp enabled number)" class="input-field">
-                <p class="mt-1 text-xs text-gray-500">Please enter a valid Whatsapp number (10-15 digits).</p>
-            </div><br>
+                <input type="tel" id="contact" name="Whatsapp Number" required pattern="[0-9]{10,12}" placeholder="e.g., 9876543210 (Whatsapp number)" class="input-field">
+                
+            </div><br><br>
 
             <button type="submit" id="submitButton" class="submit-button">
                 Register Now
-            </button>
+            </button><br><br><br>
         </form>
         
         <div class="pt-6 mt-6 border-t border-gray-200 text-center px-4 pb-4">
@@ -421,4 +421,3 @@
 
 </body>
 </html>
-
