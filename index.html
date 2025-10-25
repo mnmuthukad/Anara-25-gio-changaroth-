@@ -214,7 +214,7 @@
 
         <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 p-4 mb-6" role="alert"></div>
 
-        <form id="registrationForm" action="YOUR_APPS_SCRIPT_WEB_APP_URL_HERE" method="POST" class="space-y-6 px-4 pb-4">
+        <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbxFVhq-74JZaorMWvBaLMI6YJuwcrJkhuPtrN-EmguAF0BqFG6a8FmL2j3Pz6_u2BFT/exec" method="POST" class="space-y-6 px-4 pb-4">
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
                 <input type="text" id="name" name="Name" required placeholder="Full Name" class="input-field">
@@ -227,20 +227,7 @@
 
             <div>
                 <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unit / Halqa <span class="text-red-500">*</span></label>
-                <select id="unit" name="Unit/halqa" required class="input-field appearance-none">
-                    <option value="" disabled selected>Select a Unit / Halqa</option>
-                    <option value="Cheriya Kumbalam">Cheriya Kumbalam</option>
-                    <option value="Paleri">Paleri</option>
-                    <option value="Panthirikara">Panthirikara</option>
-                    <option value="Parakadav">Parakadav</option>
-                    <option value="Thodathankandy">Thodathankandy</option>
-                    <option value="Other">Other (Please Specify)</option>
-                </select>
-            </div>
-
-            <div id="otherUnitContainer" class="hidden">
-                <label for="other_unit" class="block text-sm font-medium text-gray-700 mb-1">Specify Unit / Halqa <span class="text-red-500">*</span></label>
-                <input type="text" id="other_unit" name="Other Unit/Halqa" placeholder="Write your Unit or Halqa here" class="input-field" disabled>
+                <input type="text" id="unit" name="Unit/halqa" required placeholder="e.g., Cheriya Kumbalam" class="input-field">
             </div>
 
             <div>
@@ -283,31 +270,19 @@
         const successModalOverlay = document.getElementById('successModalOverlay');
         const successModalContent = document.getElementById('successModalContent');
         
-        // Elements for the 'Unit / Halqa' dropdown logic
-        const unitSelect = document.getElementById('unit');
-        const otherUnitContainer = document.getElementById('otherUnitContainer');
-        const otherUnitInput = document.getElementById('other_unit');
-        
-        // Elements for title case logic
+        // Input fields for title case logic
         const nameInput = document.getElementById('name');
+        const unitInput = document.getElementById('unit'); // Changed from unitSelect
         const placeInput = document.getElementById('place');
 
         // --- DATA PROCESSING LOGIC ---
-        // Gathers form data and performs conditional processing for 'Other Unit/Halqa'
+        // Gathers form data for submission and display
         function getFormDataObject(form) {
             const formData = new FormData(form);
             const data = {};
             for (let [key, value] of formData.entries()) {
                 data[key] = value;
             }
-
-            // If 'Other' is selected for 'Unit/halqa', use the value from 'Other Unit/Halqa'
-            const selectedUnit = data['Unit/halqa'];
-            if (selectedUnit === 'Other' && data['Other Unit/Halqa']) {
-                data['Unit/halqa'] = data['Other Unit/Halqa'];
-            }
-            // Remove the 'Other Unit/Halqa' field from the final data object to avoid duplicates
-            delete data['Other Unit/Halqa'];
 
             // Clean up keys for display in modal (e.g., convert 'Unit/halqa' to 'Unit / Halqa')
             const cleanedData = {};
@@ -392,27 +367,10 @@
             inputElement.setSelectionRange(start, end);
         }
 
-        // Apply title case to Name and Place fields
+        // Apply title case to Name, Unit, and Place fields
         nameInput.addEventListener('input', () => applyTitleCase(nameInput));
+        unitInput.addEventListener('input', () => applyTitleCase(unitInput)); // Now applies to the text input
         placeInput.addEventListener('input', () => applyTitleCase(placeInput));
-
-
-        // --- UNIT/HALQA (DROPDOWN) LOGIC ---
-        // Toggles the visibility and required status of the 'Other Unit/Halqa' input
-        unitSelect.addEventListener('change', function() {
-            if (this.value === 'Other') {
-                otherUnitContainer.classList.remove('hidden');
-                otherUnitInput.required = true;
-                otherUnitInput.disabled = false;
-                otherUnitInput.addEventListener('input', () => applyTitleCase(otherUnitInput)); // Add title case listener when active
-            } else {
-                otherUnitContainer.classList.add('hidden');
-                otherUnitInput.required = false;
-                otherUnitInput.disabled = true;
-                otherUnitInput.value = ''; // Clear value when hidden
-                otherUnitInput.removeEventListener('input', () => applyTitleCase(otherUnitInput)); // Remove title case listener when inactive
-            }
-        });
 
 
         // --- FORM SUBMISSION HANDLER ---
@@ -441,16 +399,6 @@
             submitButton.disabled = true;
 
             const actionUrl = form.getAttribute('action');
-
-            // --- SIMULATED SUCCESS FOR TESTING ---
-            // If the action URL is the placeholder, simulate a successful submission
-            if (actionUrl === "" || actionUrl === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
-                setTimeout(() => { // Simulate network delay
-                    showSuccessModal(submittedData);
-                    console.warn("NOTE: Form data was NOT sent. Using simulated success. Please replace 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE' with your actual Google Apps Script Web App URL.");
-                }, 1000); // 1 second delay
-                return; // Stop execution
-            }
 
             // --- ACTUAL FORM SUBMISSION ---
             try {
