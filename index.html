@@ -137,6 +137,64 @@
                 padding: 10px 15px;
             }
         }
+
+        /* --- Submission Preview Specific Styles --- */
+        .submission-preview-wrapper {
+            padding: 0 20px; /* Add horizontal padding to the preview wrapper */
+            margin-bottom: 20px; /* Space above the powered by section */
+        }
+
+        .submission-preview-list li {
+            display: flex;
+            flex-direction: column; /* Stack key and value on small screens */
+            align-items: flex-start;
+            margin-bottom: 10px; /* Space between list items */
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e5e7eb; /* Subtle separator */
+        }
+
+        .submission-preview-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .submission-preview-list strong {
+            font-size: 0.9em; /* Slightly smaller key text */
+            color: #4b5563; /* Darker gray for keys */
+            margin-bottom: 4px; /* Space between key and value */
+            width: 100%; /* Ensure key takes full width */
+        }
+        
+        .submission-preview-list span {
+            font-size: 1em; /* Normal size for value text */
+            color: #1f2937; /* Even darker gray for values */
+            text-align: left; /* Align value text to the left */
+            width: 100%; /* Ensure value takes full width */
+            word-wrap: break-word; /* Prevent long words from overflowing */
+        }
+
+        /* For larger screens, display key and value side-by-side */
+        @media (min-width: 480px) {
+            .submission-preview-list li {
+                flex-direction: row; /* Side-by-side on wider screens */
+                align-items: center; /* Vertically align */
+                justify-content: space-between;
+            }
+            .submission-preview-list strong {
+                width: auto; /* Auto width for key */
+                min-width: 120px; /* Minimum width for alignment */
+                margin-bottom: 0; /* Remove bottom margin */
+                margin-right: 15px; /* Space between key and value */
+                text-align: right; /* Align key text to the right */
+            }
+            .submission-preview-list span {
+                text-align: right; /* Align value text to the right */
+                flex-grow: 1; /* Allow value to take remaining space */
+                width: auto;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -155,10 +213,10 @@
             </div>
         </div>
 
-        <h1 class="text-3xl font-bold text-center mb-3 text-gray-800">Registration Form</h1>
-        <p class="text-center mb-6 text-gray-500">Please fill out the details below to register. **All fields are mandatory.**</p>
+        <h1 id="formTitle" class="text-3xl font-bold text-center mb-3 text-gray-800">Registration Form</h1>
+        <p id="formDescription" class="text-center mb-6 text-gray-500">Please fill out the details below to register. **All fields are mandatory.**</p>
 
-        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-4 mb-6" role="alert"></div>
+        <div id="messageBox" class="hidden rounded-lg font-medium text-center mx-auto mb-6 max-w-full" role="alert"></div>
 
         <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbznBkMLH22EWbDm3eZlRXuynNw-9ve7ih768DS2Qwb1FEHy2W3tK3fK1bwAmlHSyVd8/exec" method="POST" class="space-y-6 pb-4">
             <div>
@@ -217,8 +275,10 @@
 
     <script>
         const form = document.getElementById('registrationForm');
-        const messageBox = document.getElementById('messageBox');
+        const messageBox = document.getElementById('messageBox'); // This now acts as the preview container
         const submitButton = document.getElementById('submitButton');
+        const formTitle = document.getElementById('formTitle');
+        const formDescription = document.getElementById('formDescription');
         
         // Elements for the 'Unit / Halqa' dropdown logic
         const unitSelect = document.getElementById('unit');
@@ -263,70 +323,58 @@
         // --- SUBMISSION PREVIEW LOGIC ---
 
         function showSubmissionPreview(data) {
+            // Adjust the messageBox classes for the preview state
+            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'text-center', 'p-4', 'mx-4');
+            messageBox.classList.add('bg-green-50', 'p-6', 'text-left'); // Use text-left for list items
+
             // Build the HTML content for the preview
-            let htmlContent = '<p class="text-xl font-bold text-green-700 mb-4">Registration Successful!</p>';
-            htmlContent += '<p class="text-lg text-gray-700 mb-4">A preview of the information you submitted:</p>';
-            
-            // Start list
-            htmlContent += '<ul class="text-left space-y-3 p-4 bg-white rounded-lg border border-green-200">';
+            let htmlContent = `
+                <p class="text-xl font-bold text-green-700 mb-4 text-center">Registration Successful!</p>
+                <p class="text-lg text-gray-700 mb-4 text-center">A preview of the information you submitted:</p>
+                <ul class="submission-preview-list mb-6">`; // Apply new class for styling
             
             // Create list items for each piece of data
             for (const key in data) {
                 const value = data[key];
-                // Format the key for display (e.g., "Unit/halqa" -> "Unit / Halqa")
                 let displayKey = key.replace(/(\/|\s)/g, ' / ').replace('Unit / Halqa', 'Unit / Halqa');
                 
-                // Fix capitalization anomaly caused by the automatic replacement (e.g. "Whatsapp Number" should be "Whatsapp Number")
                 if (displayKey.includes('Whatsapp')) {
                     displayKey = 'Whatsapp Number';
                 }
 
-                htmlContent += `<li class="flex justify-between items-start">
-                                    <strong class="font-semibold text-gray-600 min-w-[120px] pr-4">${displayKey}:</strong> 
-                                    <span class="text-gray-900 font-medium text-right flex-1">${value}</span>
+                htmlContent += `<li>
+                                    <strong>${displayKey}:</strong> 
+                                    <span>${value}</span>
                                 </li>`;
             }
             
-            htmlContent += '</ul>';
-            
-            // Button to allow user to register again
-            htmlContent += '<button onclick="window.location.reload();" class="mt-6 w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg">Start New Registration</button>';
-
+            htmlContent += `</ul>
+                <button onclick="window.location.reload();" class="mt-4 w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition shadow-lg">Start New Registration</button>
+            `;
 
             // Update the message box with the preview
             messageBox.innerHTML = htmlContent;
-            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'text-center', 'p-4');
-            messageBox.classList.add('bg-green-50', 'p-6'); // Apply clean background/padding
             
-            // Hide the form fields
+            // Hide the original form elements
             form.classList.add('hidden');
-
-            // Hide the general header info (h1 and p below it)
-            document.querySelector('.form-container > h1').classList.add('hidden');
-            document.querySelector('.form-container > p:not(#messageBox)').classList.add('hidden'); // Selects the paragraph after h1
+            formTitle.classList.add('hidden');
+            formDescription.classList.add('hidden');
         }
 
         // --- TITLE CASE LOGIC ---
 
         // Function to apply Title Case to the input field's value
         function applyTitleCase(inputElement) {
-            // Get the current cursor position to maintain a smooth typing experience
             const start = inputElement.selectionStart;
             const end = inputElement.selectionEnd;
 
-            // Get the value, convert it to lowercase first to reset previous casing
             let value = inputElement.value.toLowerCase();
             
-            // Convert to title case: capitalize the first letter of every word
             let titleCaseValue = value.replace(/\b\w/g, function(char) {
                 return char.toUpperCase();
-            }
-            );
+            });
 
-            // Update the input field's value
             inputElement.value = titleCaseValue;
-            
-            // Restore cursor position
             inputElement.setSelectionRange(start, end);
         }
 
@@ -341,15 +389,13 @@
         // Function to handle the visibility and requirement of the 'Other' input
         unitSelect.addEventListener('change', function() {
             if (this.value === 'Other') {
-                // Show the input, make it required and enabled for submission
                 otherUnitContainer.classList.remove('hidden');
                 otherUnitInput.required = true;
                 otherUnitInput.disabled = false;
             } else {
-                // Hide the input, remove required, clear value, and disable it
                 otherUnitContainer.classList.add('hidden');
                 otherUnitInput.required = false;
-                otherUnitInput.disabled = true; // Disabled fields are not submitted
+                otherUnitInput.disabled = true;
                 otherUnitInput.value = '';
             }
         });
@@ -361,44 +407,44 @@
         function displayError(message) {
             messageBox.innerHTML = `<p class="font-medium">${message}</p>`;
             messageBox.classList.remove('hidden', 'bg-green-50', 'p-6');
-            messageBox.classList.add('bg-red-100', 'text-red-800', 'text-center', 'p-4');
+            messageBox.classList.add('bg-red-100', 'text-red-800', 'text-center', 'p-4', 'mx-4');
+            
+            // Ensure the main form elements are visible if it's an error
+            form.classList.remove('hidden');
+            formTitle.classList.remove('hidden');
+            formDescription.classList.remove('hidden');
+
+            submitButton.textContent = 'Register Now';
+            submitButton.disabled = false;
         }
 
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            // 1. Get the data before proceeding
             const submittedData = getFormDataObject(form);
 
-            // Disable button and show loading state
             submitButton.textContent = 'Submitting...';
             submitButton.disabled = true;
 
             const actionUrl = form.getAttribute('action');
 
             if (actionUrl === "" || actionUrl === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
-                // SIMULATED SUCCESS if the action URL hasn't been set yet
                 showSubmissionPreview(submittedData);
                 console.warn("NOTE: Form data was NOT sent to Google Sheets. Please deploy the Apps Script and replace the action URL in the HTML form.");
                 return;
             }
 
-            // REAL SUBMISSION to the Apps Script endpoint
             try {
                 const formData = new FormData(form);
                 
-                // Note: We use the raw FormData here as the Apps Script expects the raw form fields,
-                // including 'Other Unit/Halqa' if present, which the Apps Script resolves.
                 const response = await fetch(actionUrl, {
                     method: 'POST',
                     body: formData
                 });
 
-                // The Apps Script returns a JSON object on success
                 if (response.ok) {
                     showSubmissionPreview(submittedData);
                 } else {
-                    // Check if the response body contains an error message from Apps Script
                     const errorText = await response.text();
                     console.error('Apps Script Response Error:', errorText);
                     displayError("An error occurred during submission. Check the Apps Script deployment permissions or URL.");
@@ -406,12 +452,6 @@
             } catch (error) {
                 console.error('Submission error:', error);
                 displayError("Network or technical error. Could not submit the form.");
-            } finally {
-                // Re-enable button on error, but not on success since the form is hidden
-                if (form.classList.contains('hidden') === false) {
-                    submitButton.textContent = 'Register Now';
-                    submitButton.disabled = false;
-                }
             }
         });
     </script>
