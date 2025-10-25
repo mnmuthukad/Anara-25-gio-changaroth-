@@ -1,2 +1,2 @@
-# Anara-25-gio-changaroth
-ANARA '25 Girls Meet
+# Anara'25 GIO Changaroth
+GIO Girls Meet
